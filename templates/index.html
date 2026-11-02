@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html><head><title>Mughal Jewellery Abbottabad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial; padding:15px; margin:0; background:#fdfdfd}
+.header{background:#111; color:gold; padding:15px; text-align:center; border-radius:10px}
+.header a{color:white; text-decoration:none}
+.card{border:1px solid #ddd; width:300px; display:inline-block; margin:10px; padding:10px; text-align:center; vertical-align:top; background:white; border-radius:10px}
+img{width:100%; height:260px; object-fit:cover; border-radius:8px}
+.price{color:green; font-weight:bold; font-size:18px} .old{text-decoration:line-through; color:gray; font-size:14px}
+#chat{position:fixed; bottom:20px; right:20px; width:320px; background:white; border:2px solid green; padding:10px; border-radius:10px; z-index:99}
+#chatbox{height:180px; overflow-y:auto; border:1px solid #ccc; padding:5px; margin-bottom:5px; font-size:13px}
+.whatsapp{position:fixed; bottom:20px; left:20px; background:#25D366; color:white; padding:12px 18px; border-radius:30px; text-decoration:none; font-weight:bold}
+</style></head>
+<body>
+
+<div class="header">
+<h2 style="margin:0">MUGHAL JEWELLERY</h2>
+<p style="margin:5px 0">Shop No 1, Momin Market, Gami Adda, Abbottabad</p>
+<p style="margin:0">Contact / JazzCash / EasyPaisa: <a href="tel:03005639461">03005639461</a></p>
+</div>
+
+<h3 style="text-align:center">Total Designs: MJ1 to MJ{{ jewellery|length }} - All Pakistan Delivery</h3>
+<input type="text" id="search" placeholder="Search karo jaise MJ62, Choker, Kundan" onkeyup="filter()" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc">
+
+<div id="list">
+{% for code, item in jewellery.items() %}
+<div class="card" data-code="{{ code }}" data-name="{{ item.name }}">
+<img src="/static/{{ item.img }}">
+<h4>{{ code }} - {{ item.name }}</h4>
+<p><span class="old">{{ item.original }}</span> <span class="price">{{ item.final }}</span></p>
+<button onclick="botReply('{{ code }}')" style="background:black; color:gold; padding:6px 12px; border:none; border-radius:5px">Detail Dekho</button>
+</div>
+{% endfor %}
+</div>
+
+<a class="whatsapp" href="https://wa.me/923005639461?text=Salam%20Mughal%20Jewellery%20MJ" target="_blank">WhatsApp Order</a>
+
+<div id="chat">
+<div id="chatbox">Bot: Salam! Mughal Jewellery me khush amdeed! Koi MJ code bhejo, main price, delivery aur payment bataunga. Jaise MJ61</div>
+<input id="msg" placeholder="MJ code likho" style="width:68%; padding:6px"><button onclick="send()" style="width:28%; background:green; color:white; border:none; padding:6px">Send</button>
+</div>
+
+<script>
+function filter(){
+ let v=document.getElementById('search').value.toUpperCase();
+ document.querySelectorAll('.card').forEach(c=>{
+   c.style.display=(c.dataset.code.includes(v) || c.dataset.name.toUpperCase().includes(v))?'inline-block':'none';
+ });
+}
+function botReply(code){
+  let box=document.getElementById('chatbox');
+  let card = document.querySelector(`[data-code="${code}"]`);
+  let price = card.querySelector('.price').innerText;
+  let name = card.dataset.name;
+  box.innerHTML+=`<br><br><b>You:</b> ${code}<br><b>Bot:</b> ${code} - ${name} available hai.<br>Final Price: ${price}<br>Delivery: All Pakistan<br>Payment: JazzCash/EasyPaisa 03005639461<br>Shop: Momin Market Gami Adda Abbottabad<br>Order ke liye neeche WhatsApp button dabao.`;
+  box.scrollTop=box.scrollHeight;
+}
+function send(){
+ let m=document.getElementById('msg').value.toUpperCase().trim();
+ if(!m) return;
+ let box=document.getElementById('chatbox');
+ box.innerHTML+=`<br><br><b>You:</b> ${m}`;
+ let card = document.querySelector(`[data-code="${m}"]`);
+ if(card){
+   let price = card.querySelector('.price').innerText;
+   let name = card.dataset.name;
+   box.innerHTML+=`<br><b>Bot:</b> ${m} - ${name}<br>Final: ${price}<br>Original se discount me.<br>JazzCash: 03005639461 pe payment kar sakte hain.<br>Address: Shop 1 Momin Market Gami Adda Abbottabad`;
+   card.scrollIntoView({behavior:'smooth', block:'center'});
+   card.style.border='2px solid green';
+ }else{
+   box.innerHTML+=`<br><b>Bot:</b> Ye code nahi mila. MJ1 se MJ{{ jewellery|length }} tak koi code likho ya Choker/Kundan likho.`;
+ }
+ box.scrollTop=box.scrollHeight;
+ document.getElementById('msg').value='';
+}
+</script>
+</body></html>

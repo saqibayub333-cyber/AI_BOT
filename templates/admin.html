@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin - Edit Price</title></head>
+<body style="font-family: sans-serif; padding: 20px;">
+<h2>MJ Items - Price Edit (WhatsApp se dekh ke likho)</h2>
+<form method="POST">
+{% for code, item in jewellery.items() %}
+<div style="border:1px solid #ccc; padding:10px; margin:10px; display:flex; gap:15px; align-items:center;">
+  <img src="/static/{{ item.img }}" width="100" style="border:1px solid #000;">
+  <div>
+    <b>{{ code }}</b><br>
+    Name: <input type="text" name="name_{{ code }}" value="{{ item.name }}" style="width:300px;"><br>
+    Original: <input type="number" name="orig_{{ code }}" value="{{ item.original }}" style="width:80px;">
+    Final: <input type="number" name="final_{{ code }}" value="{{ item.final }}" style="width:80px;">
+    Category: <select name="cat_{{ code }}">
+      <option value="necklace" {% if item.category=='necklace' %}selected{% endif %}>necklace</option>
+      <option value="rings" {% if item.category=='rings' %}selected{% endif %}>rings</option>
+      <option value="bangles" {% if item.category=='bangles' %}selected{% endif %}>bangles</option>
+      <option value="earrings" {% if item.category=='earrings' %}selected{% endif %}>earrings</option>
+      <option value="bags" {% if item.category=='bags' %}selected{% endif %}>bags</option>
+      <option value="mix" {% if item.category=='mix' %}selected{% endif %}>mix</option>
+    </select>
+  </div>
+</div>
+{% endfor %}
+<button type="submit" style="padding:15px 30px; background:green; color:white; font-size:18px; position:fixed; bottom:20px; right:20px;">SAVE ALL</button>
+</form>
+</body>
+</html>
