@@ -1,6 +1,7 @@
-﻿from flask import Flask, render_template, request, redirect
+﻿from flask import Flask, render_template, request, redirect, jsonify
 import os
 import csv
+import re
 
 app = Flask(__name__)
 
@@ -32,23 +33,72 @@ def load_bot_prompt():
     if os.path.exists(BOT_FILE):
         with open(BOT_FILE, 'r', encoding='utf-8') as f:
             return f.read()
-    return """You are MJ Collection Bot - Polite & Respectful.
-If customer says mehanga hai, say: Sir imported hai bahir se mangwate hain.
-If guarantee, say: Artificial hai tareeqay se use karen to kuch nahi hota.
-Ask for address, then price, then EasyPaisa/JazzCash 03005639461.
-Ask for payment screenshot, then say order 5-6 days me pohnch jayega.
-If gali, say Welcome Sir/Madam."""
+    return ""
+
+def get_bot_reply(user_msg, jewellery):
+    msg = user_msg.lower().strip()
+    msg_clean = msg.replace(" ","")
+
+    # 1. Gali check - NEVER reply with gali
+    gali_words = ["bhen","behen","madar","chut","gandu","harami","kutti","kutta","randi","lora","lund"]
+    if any(g in msg for g in gali_words):
+        return "Welcome, Sir / Welcome, Madam, hukum karen apko kya chahiye?"
+
+    # 2. Mehenga check
+    if any(w in msg for w in ["mehenga","mehnga","mehinga","mehnga","price zyada","bohot zyada","bohat mehnga"]):
+        return "Sir, ye imported item hai, hum bahir se mangwate hain, quality best hai is liye price ye hai. Welcome Sir."
+
+    # 3. Guarantee / Kala check
+    if any(w in msg for w in ["guarantee","kala","kaala","kale","rang","color"]):
+        return "Sir, ye artificial hai, tareeqay se istemal karen to kuch nahi hota, long time chalta hai."
+
+    # 4. Order Flow
+    if any(w in msg for w in ["order","lena","chahiye","buy","mujhe ye"]):
+        return "Sir/Madam, apna complete address bta dein?"
+
+    # 5. Address lag raha hai (lamba msg, ya address likha)
+    if len(msg) > 20 and any(w in msg for w in ["abbottabad","house","street","gali","colony","road","city","mohalla"]) or "address" in msg:
+        return "Shukriya Sir/Madam, total price 2400 + 200 delivery = 2600. EasyPaisa / JazzCash 03005639461 pe payment kar dein."
+
+    # 6. Payment / Screenshot
+    if any(w in msg for w in ["payment","easypaisa","jazzcash","send kar di","kar diya"]):
+        return "Payment ka screenshot bhej dein Sir/Madam."
+
+    if any(w in msg for w in ["screenshot","screen shot","bhej diya","done"]):
+        return "Shukriya Sir/Madam, apka order 5-6 din me apke address pe pohnch jayega."
+
+    # 7. MJ Code search
+    code_match = re.search(r'mj\s?(\d+)', msg)
+    if code_match:
+        code = f"MJ{code_match.group(1)}"
+        if code in jewellery:
+            item = jewellery[code]
+            return f"{code} - {item['name']} available hai. Price: {item['final']} (Original {item['original']}). Order ke liye address bhej dein Sir."
+    
+    # 8. Choker / Kundan
+    if "choker" in msg or "kundan" in msg:
+        return f"Sir {msg} collection me kafi designs hain. Koi MJ code likho MJ1 se MJ122 tak."
+
+    # Default
+    return "Welcome Sir / Welcome Madam, hukum karen apko kya chahiye? Koi MJ code bhejein ya apna sawal likhein."
 
 @app.route("/")
 def home():
     return render_template("index.html", jewellery=load_data())
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_msg = data.get("message","")
+    jewellery = load_data()
+    reply = get_bot_reply(user_msg, jewellery)
+    return jsonify({"reply": reply})
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     jewellery = load_data()
     bot_prompt = load_bot_prompt()
     if request.method == "POST":
-        # 1. Save jewellery CSV
         with open(CSV_FILE, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(['code','name','original','final','category'])
@@ -58,12 +108,9 @@ def admin():
                 final = request.form.get(f"final_{code}", jewellery[code]['final'])
                 cat = request.form.get(f"cat_{code}", jewellery[code]['category'])
                 writer.writerow([code, name, orig, final, cat])
-        
-        # 2. Save Bot Prompt
         new_bot_prompt = request.form.get("bot_prompt", bot_prompt)
         with open(BOT_FILE, 'w', encoding='utf-8') as bf:
             bf.write(new_bot_prompt)
-            
         return redirect("/admin")
     return render_template("admin.html", jewellery=jewellery, bot_prompt=bot_prompt)
 
