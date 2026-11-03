@@ -101,23 +101,23 @@ def get_bot_reply(user_msg, jewellery):
 
     # Default
     return "Welcome Sir / Welcome Madam, hukum karen apko kya chahiye? Koi MJ code bhejein ya apna sawal likhein."
-
 @app.route("/")
 def home():
-    return render_template("index.html", jewellery=load_data())
+    return render_template("index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
     user_msg = data.get("message", "")
     msg = user_msg.lower()
-    if any(w in msg for w in ['mehenga','mehinga','mehnga','expensive','bohot mehenga']):
-            return jsonify({"reply": "Samajh sakta hun Sir, ye Indian imported jewellery hai, quality local se bohot behtar hai, kala nahi hota. Original 3500 se discount me Final 3150 me de rahe hain."})
+    if any(w in msg for w in ['mehenga','mehinga','mehnga','expensive']):
+        return jsonify({"reply": "Samajh sakta hun Sir, ye Indian imported jewellery hai, quality local se bohot behtar hai, kala nahi hota. Original 3500 se discount me Final 3150 me de rahe hain."})
     if 'jazz' in msg or 'cash' in msg or 'payment' in msg:
-            return jsonify({"reply": "JazzCash: 03005639461 pe payment kar sakte hain. Address: Shop 1 Momin Market Gami Adda Abbottabad."})
+        return jsonify({"reply": "JazzCash: 03005639461 pe payment kar sakte hain. Address: Shop 1 Momin Market Gami Adda Abbottabad."})
     jewellery = load_data()
     reply = get_bot_reply(user_msg, jewellery)
-    return jsonify({"reply": reply})   
+    return jsonify({"reply": reply})
+
 
 
 
