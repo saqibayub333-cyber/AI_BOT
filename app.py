@@ -36,8 +36,28 @@ def load_bot_prompt():
     return ""
 
 def get_bot_reply(user_msg, jewellery):
-    msg = user_msg.lower().strip()
-    msg_clean = msg.replace(" ","")
+    msg = user_msg.lower()
+
+    # 1. Mehanga wala
+    if any(w in msg for w in ['mehenga','mehinga','mehnga','mehngha','expensive','price zyada','bohot mehenga']):
+        return "Samajh sakta hun. Ye Indian imported jewellery hai, iski polish aur stone quality local se bohot behtar hai. Long lasting hai, kala nahi hota. Isi wajah se price thoda zyada hai."
+
+    # 2. JazzCash / Payment
+    if any(w in msg for w in ['jazz','cash','jazzcash','payment','paisa bhejna','account']):
+        return "JazzCash: 03005639461 pe payment kar sakte hain. Payment ke baad screenshot bhej dein."
+
+    # 3. Address / Shop
+    if any(w in msg for w in ['address','location','shop kahan','kahan pe','dokan']):
+        return "Hamari shop: Shop 1 Momin Market Gami Adda Abbottabad. Online delivery all Pakistan."
+
+    # 4. MJ Code - product dhoondna
+    for item in jewellery:
+        code = str(item.get('code','')).lower()
+        if code and code in msg:
+            return f"{item.get('code')} available hai - Price: {item.get('price')} - {item.get('name','')}"
+
+    # 5. Default
+    return "Welcome Sir / Welcome Madam, hukum karen apko kya chahiye? Ap MJ code bata dein ya product ka naam."
 
     # 1. Gali check - NEVER reply with gali
     gali_words = ["bhen","behen","madar","chut","gandu","harami","kutti","kutta","randi","lora","lund"]
