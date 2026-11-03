@@ -26,9 +26,8 @@
 
 <hr>
 <h2>Bot Baat-Cheet Training</h2>
-<textarea name="bot_prompt" style="width:95%; height:350px; padding:10px;">{{ bot_prompt }}</textarea>
+<textarea name="bot_prompt" style="width:95%; height:350px; padding:10px;">{{ bot_prompt if bot_prompt and bot_prompt.strip() != '' else 'You are MJ Collection Bot - Polite & Respectful.\nIf mehanga hai: Sir imported hai, quality best hai.\nIf guarantee: Artificial hai, tareeqay se use karen to kuch nahi hota.\nIf gali: Welcome Sir, hukum karen.\nOrder: 1) Address mango 2) Price 2600 + EasyPaisa 03005639461 3) Screenshot mango 4) Bolo 5-6 din me pohnch jayega.' }}</textarea>
 <br><br>
-
 <button type="submit" style="padding:15px 30px; background:green; color:white; font-size:18px; position:fixed; bottom:20px; right:20px;">SAVE ALL</button>
 </form>
 </body>
