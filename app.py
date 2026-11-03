@@ -108,16 +108,7 @@ def home():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-   
-  msg = user_msg.lower()
-    if any(w in msg for w in ['mehenga','mehinga','mehnga','expensive','bohot mehenga']):
-        return jsonify({"reply": "Samajh sakta hun Sir, ye Indian imported jewellery hai, quality local se bohot behtar hai, kala nahi hota. Original 3500 se discount me Final 3150 me de rahe hain."})
-    if 'jazz' in msg or 'cash' in msg or 'payment' in msg:
-        return jsonify({"reply": "JazzCash: 03005639461 pe payment kar sakte hain. Address: Shop 1 Momin Market Gami Adda Abbottabad."})  data = request.get_json()
-    user_msg = data.get("message","")
-    jewellery = load_data()
-    reply = get_bot_reply(user_msg, jewellery)
-    return jsonify({"reply": reply})
+ 
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
