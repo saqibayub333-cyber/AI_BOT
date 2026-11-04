@@ -14,18 +14,19 @@ SHOP_NAME = "MJ Jewellery Shop"
 
 
 # AUTO LOAD - MJ1 se MJ99 tak
-DESIGNS = []
+import os
+
+jewellery = {}
 for i in range(1, 100):
-    # Mj1.jpg, Mj2.jpg ... Mj99.jpg
-    for fname in [f"Mj{i}.jpg", f"mj{i}.jpg", f"MJ{i}.jpg"]:
-        if os.path.exists(os.path.join("static", fname)):
-            DESIGNS.append({
-                "code": f"MJ{i}",
-                "name": f"Artificial Jewellery Design MJ{i}",
-                "price": 0,
-                "image": fname
-            })
-            break
+    code = f"MJ{i}"
+    fname = f"MJ{i}.jpg"
+    if os.path.exists(os.path.join("static", fname)):
+        jewellery[code] = {
+            "name": f"Design {code}",
+            "img": fname,
+            "price": 52000,
+            "original": 65000
+        }
 
 ORDERS = []
 
