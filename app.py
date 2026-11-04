@@ -83,7 +83,7 @@ function finalOrder(){
 
 @app.route('/')
 def home():
-    return render_template_string(HTML, designs=DESIGNS)
+    return render_template_string(HTML, designs=jewellery)
 
 # ===== BOT KI BAAT-CHEET - IKHLAQ WALA =====
 def bot_reply(msg):
@@ -91,7 +91,7 @@ def bot_reply(msg):
     if "salam" in msg or "hi" in msg or "hello" in msg:
         return f"Assalam-o-Alaikum! {SHOP_NAME} me khushamdeed. Aapko kis cheez me dilchaspi hai? Ring, Necklace ya Earrings? Mai aapki madad karunga."
     if "price" in msg or "rate" in msg or "kitne" in msg:
-        all_designs = ", ".join([f"{d['code']} {d['name']} Rs {d['price']}" for d in DESIGNS])
+        all_designs = ", ".join([f"{d['code']} {d['name']} Rs {d['price']}" for d in jewellery])
         return f"Ji bilkul! Hamare designs ye hain: {all_designs}. Konsa pasand kiya aapne? Photo bhej dein to mai confirm kar dunga."
     if "order" in msg or "lena" in msg or "chahiye" in msg:
         return f"Bilkul! Aapka order final kar dun? Apna Naam aur Poora Address bhej dein. Payment aap JazzCash / EasyPaisa pe kar sakte hain - {JAZZCASH_NUMBER} pe. Shukriya!"
