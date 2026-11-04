@@ -61,6 +61,18 @@ function send(){
  if(!m) return;
  let box=document.getElementById('chatbox');
  box.innerHTML+=`<br><br><b>You:</b> ${m}`;
+ if(m.includes('SALAM') || m.includes('AOA')){
+box.innerHTML+=`<br><b>Bot:</b> W. Assalam Sahb! Kese hain aap? Koi MJ Code bhejein, main price bata deta hun!`;
+box.scrollTop=box.scrollHeight;
+document.getElementById('msg').value='';
+return;
+}
+if(m=='HY' || m=='HI' || m=='HELLO' || m=='HEY'){
+box.innerHTML+=`<br><b>Bot:</b> Hy Sahb! Main theek hun, Shukar hai! Aap sunayein, kese hain? Koi MJ Code bhejna hai?`;
+box.scrollTop=box.scrollHeight;
+document.getElementById('msg').value='';
+return;
+}
  let card = document.querySelector(`[data-code="${m}"]`);
  if(card){
    let price = card.querySelector('.price').innerText;
