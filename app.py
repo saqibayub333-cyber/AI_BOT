@@ -1,4 +1,4 @@
-﻿from flask import Flask, request, jsonify, render_template_string
+﻿from flask import Flask, render_template, request, jsonify
 import datetime
 import os
 
@@ -83,7 +83,7 @@ function finalOrder(){
 
 @app.route('/')
 def home():
-    return render_template_string(HTML, jewellery=jewellery)
+    return render_template_("index.html", jewellery=jewellery)
 
 # ===== BOT KI BAAT-CHEET - IKHLAQ WALA =====
 def bot_reply(msg):
