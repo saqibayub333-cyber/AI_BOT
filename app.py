@@ -83,7 +83,7 @@ function finalOrder(){
 
 @app.route('/')
 def home():
-    return render_template_("index.html", jewellery=jewellery)
+    return render_template("index.html", jewellery=jewellery)
 
 # ===== BOT KI BAAT-CHEET - IKHLAQ WALA =====
 def bot_reply(msg):
