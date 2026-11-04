@@ -86,29 +86,50 @@ def home():
     return render_template("index.html", jewellery=jewellery)
 
 # ===== BOT KI BAAT-CHEET - IKHLAQ WALA =====
-def bot_reply(msg):
-    msg = msg.lower()
+def get_bot_reply(msg):
+    msg = msg.lower().strip()
+
+    # Salam
     if "salam" in msg or "hi" in msg or "hello" in msg:
-        return f"Assalam-o-Alaikum! {SHOP_NAME} me khushamdeed. Aapko kis cheez me dilchaspi hai? Ring, Necklace ya Earrings? Mai aapki madad karunga."
-    if "price" in msg or "rate" in msg or "kitne" in msg:
-        all_designs = ", ".join([f"{d['code']} {d['name']} Rs {d['price']}" for d in jewellery])
-        return f"Ji bilkul! Hamare designs ye hain: {all_designs}. Konsa pasand kiya aapne? Photo bhej dein to mai confirm kar dunga."
-    if "order" in msg or "lena" in msg or "chahiye" in msg:
-        return f"Bilkul! Aapka order final kar dun? Apna Naam aur Poora Address bhej dein. Payment aap JazzCash / EasyPaisa pe kar sakte hain - {JAZZCASH_NUMBER} pe. Shukriya!"
-    if "jazzcash" in msg or "easypaisa" in msg or "payment" in msg:
-        return f"Ji, Payment JazzCash aur EasyPaisa dono isi number pe hai: {JAZZCASH_NUMBER}. Payment karke screenshot bhej dein, mai aapka order dispatch karwa dunga."
-    if "address" in msg or "deliver" in msg or "delivery" in msg:
-        return "Ji, apna poora naam aur address bhej dein, mai aapka parcel dispatch karwa dunga. Peshawar me same day, bahar 2-3 din me pohanch jayega."
-    if "shukriya" in msg or "thanks" in msg:
-        return "Aapka bohot shukriya! MJ Jewellery ko yaad rakhiyega. Allah Hafiz!"
-    return "Ji, samajh gaya. Aap design ka naam ya photo bhej dein, mai aapko price aur details bata deta hun. Aap order final karna chahte hain?"
+        return "Walaikum Salam Sahb, kaunsa design dekhna hai? MJ code bata den."
+
+    # JazzCash / EasyPaisa
+    if "jazz" in msg or "easypaisa" in msg or "payment" in msg or "paisa" in msg:
+        return "JazzCash / EasyPaisa: 03005639461 hai Sahb. Send karke screenshot bhej den."
+
+    # Delivery
+    if "delivery" in msg or "dc" in msg or "kab" in msg or "pohanch" in msg:
+        return "All Pakistan Delivery hai Sahb, 2-3 din me pohanch jayega."
+
+    # Address / Shop
+    if "shop" in msg or "address" in msg or "kahan" in msg or "dukhan" in msg:
+        return "Shop No 1, Momin Market, Gami Adda, Abbottabad."
+
+    # Price
+    if "price" in msg or "rate" in msg or "kimat" in msg:
+        return "Kaunsa code hai Sahb? MJ code likhen, mai price bata deta hun."
+
+    # MJ Code - MJ1 se MJ98
+    for code in jewellery:
+        if code.lower() in msg:
+            item = jewellery[code]
+            return f"{code} available hai, Price {item['price']} hai. Order ke liye WhatsApp kar den."
+
+    # Choker / Kundan
+    if "choker" in msg:
+        return "Choker wale MJ12, MJ25, MJ40 me hain. Kaunsa dekhna hai?"
+    if "kundan" in msg:
+        return "Kundan wale MJ8, MJ9 me hain. Price 65000 hai."
+
+    # Na samajh aaye to
+    return "Samajh nahi aaya Sahb, MJ code likhen ya JazzCash likhen."
 
 # ===== WHATSAPP / FACEBOOK / INSTA / TIKTOK SE AANE WALA MESSAGE =====
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.json or {}
     user_msg = data.get("message", "")
-    reply = bot_reply(user_msg)
+    reply=get_bot_reply(user_msg)
     # Yahan se order Malik ke number pe jayega - Phase 2 me WhatsApp API lagegi
     print(f"Customer: {user_msg} | Bot: {reply} | Malik ko bhejna hai: {MALIK_NUMBER}")
     return jsonify({"reply": reply, "send_to_malik": MALIK_NUMBER})
