@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify, render_template_string
+﻿from flask import Flask, request, jsonify, render_template_string
 import datetime
+import os
 
 app = Flask(__name__)
 
@@ -10,11 +11,21 @@ EASYPAISA_NUMBER = "03005639461"
 SHOP_NAME = "MJ Jewellery Shop"
 
 # ===== DESIGNS - Yahan apne design add karo =====
-DESIGNS = [
-    {"code": "MJ001", "name": "Gold Ring", "price": 52000, "stock": 10},
-    {"code": "MJ002", "name": "Gold Necklace", "price": 125000, "stock": 5},
-    {"code": "MJ003", "name": "Gold Earrings", "price": 38000, "stock": 8},
-]
+
+
+# AUTO LOAD - MJ1 se MJ99 tak
+DESIGNS = []
+for i in range(1, 100):
+    # Mj1.jpg, Mj2.jpg ... Mj99.jpg
+    for fname in [f"Mj{i}.jpg", f"mj{i}.jpg", f"MJ{i}.jpg"]:
+        if os.path.exists(os.path.join("static", fname)):
+            DESIGNS.append({
+                "code": f"MJ{i}",
+                "name": f"Artificial Jewellery Design MJ{i}",
+                "price": 0,
+                "image": fname
+            })
+            break
 
 ORDERS = []
 
